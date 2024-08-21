@@ -1,0 +1,105 @@
+
+body{
+  margin: 50px auto;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  width: 100vh;
+  
+  
+}
+
+.cal-grid{
+  margin: auto;
+    font-family: Arial, sans-serif;
+    border-radius: 15px;
+    width: 300px;
+    
+    background-color: rgb(102, 39, 165);
+    overflow: hidden;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 6rem);
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+.display {
+  grid-column: 1 / -1; /* Chiếm toàn bộ chiều ngang */
+  background-color: rgba(227, 218, 218, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-around;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+input, .number{
+  color: aliceblue;
+}
+.input{
+  
+  font-size: 1rem;
+  text-align: right;
+  padding: 5px;
+  align-items: flex-end;
+ 
+  overflow-x: auto;
+  white-space: nowrap;
+  border: 2px solid #0a0a0a;
+  width: 100%;
+  margin: auto;
+  box-sizing: border-box;
+  border-radius: 3px;
+  height: 50px;
+  color: rgb(250, 246, 246);
+  background-color: rgb(47, 10, 83);
+  font-size: calc(2rem - 0.1rem);
+  transition: font-size 0.3s ease-in-out;
+  
+}
+.input::-webkit-scrollbar {
+  height: 4px; 
+}
+.display .result {
+  color: black;
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+
+.button{
+  
+  width: 50px;
+    height: 55px;
+    
+    border-radius: 40px;
+    border: none;
+    margin: 3px;
+    font-weight: bold;
+    cursor: pointer;
+    
+  
+  
+
+}
+
+.keys button {
+  font-size: 1rem; /* Adjust font size as needed */
+  padding: 10px; /* Increase padding */
+}
+
+button:hover {
+  background-color: darkgrey;
+}
+
+.keys, .grid{
+  color: rgb(11, 10, 10);
+  
+  
+  
+padding: 15px;
+  
+}
+
+

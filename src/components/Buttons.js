@@ -1,15 +1,15 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
-const ControlButton = ({ type, label, onClick }) => {
-  const handleClick = useCallback(() => {
-    onClick(type);
-  }, [type, onClick]);
+const ControlButton = ({ value, onClick }) => {
+  
 
   return (
-    <button onClick={handleClick} className={`control-button ${type}`}>
-      {label}
+    <button 
+    onClick={onClick} 
+     className="button bg-gray-500 p-4 text-lg rounded-lg focus:outline-none">
+      {value}
     </button>
   );
 };
 
-export default ControlButton;
+export default React.memo(ControlButton);

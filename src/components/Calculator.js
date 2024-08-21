@@ -1,58 +1,23 @@
 // Calculator.js
-import React, { useState, useMemo, useCallback } from 'react';
-import InputDataResult from './InputData';
-import { evaluate } from 'mathjs';
-import './cal.css';
+import React, {useState, useMemo} from 'react';
+import Display from './Display';
 import ControlButton from './Buttons';
+import useButtonHandler from '../hooks/useButtonHandle'; // Correct the path if necessary
+import '../styles/cal.css';
 
 function Calculator() {
-  const [expression, setExpression] = useState('');
+  const [input, setInput] = useState('');
   const [result, setResult] = useState('');
 
-  // Hàm xử lý các loại nút khác nhau
-  const handleButtonClick = useCallback((type) => {
-    if (type === 'clear') {
-      handleClear();
-    } else if (type === 'delete') {
-      handleDelete();
-    } else if (type === 'equals') {
-      handleEquals();
-    } else {
-      handleInput(type);
-    }
-  }, [expression]);
+  const handleButtonClick = useButtonHandler(input, setInput, setResult);
 
-  const handleClear = () => {
-    setExpression('');
-    setResult('');
-  };
-
-  const handleDelete = () => {
-    setExpression((prev) => prev.slice(0, -1));
-  };
-
-  const handleEquals = () => {
-    try {
-      const res = evaluate(expression);
-      setResult(res);
-    } catch (error) {
-      setResult('Error');
-    }
-  };
-
-  const handleInput = (type) => {
-    setExpression((prev) => prev + type);
-  };
-
- 
   const numberButtons = useMemo(() => ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0'], []);
   const operatorButtons = useMemo(() => ['%', '/', '*', '-', '+', '.'], []);
 
- 
   const renderControlButtons = () => (
-    <div className="row control-buttons">
-      {renderButton('delete', 'CE', 'btn-delete')}
-      {renderButton('clear', 'C', 'btn-clear')}
+    <div className="row flex space-x-2 mb-2">
+      {renderButton('CE', 'CE', 'btn-delete')}  {/* Corrected button type */}
+      {renderButton('C', 'C', 'btn-clear')}   {}
       {operatorButtons.slice(0, 2).map(op => renderButton(op, op, 'btn-operator'))}
     </div>
   );
@@ -60,15 +25,15 @@ function Calculator() {
   const renderNumberButtons = () => (
     <>
       {[0, 3, 6].map(start => (
-        <div key={start} className="row">
+        <div key={start} className="row flex space-x-2 mb-2">
           {numberButtons.slice(start, start + 3).map(num => renderButton(num, num, 'btn-number'))}
           {renderButton(operatorButtons[start / 3 + 2], operatorButtons[start / 3 + 2], 'btn-operator')}
         </div>
       ))}
-      <div className="row">
+      <div className="row flex space-x-2">
         {renderButton('0', '0', 'btn-number')}
         {renderButton('.', '.', 'btn-operator')}
-        {renderButton('equals', '=', 'btn-equals')}
+        {renderButton('=', '=', 'btn-equals')} {/* Corrected button type */}
       </div>
     </>
   );
@@ -76,19 +41,30 @@ function Calculator() {
   const renderButton = (type, label, className) => (
     <ControlButton
       key={type}
-      type={type}
-      label={label}
-      onClick={handleButtonClick}
-      className={className}
+      value={label}
+      onClick={() => handleButtonClick(type)} 
+      className={`btn ${className} p-4 text-lg rounded-lg focus:outline-none focus:ring-2 ${getResponsiveStyles(className)}`}
     />
   );
 
+  const getResponsiveStyles = (className) => {
+    switch (className) {
+      case 'btn-delete':
+      case 'btn-clear':
+        return 'text-red-500'; // Example: different colors for delete/clear
+      case 'btn-equals':
+        return 'text-green-500'; // Example: color for equals button
+      default:
+        return '';
+    }
+  };
+
   return (
-    <div className="cal-grid">
-      <div className="output">
-        <InputDataResult number={expression} result={result} />
-      </div>
-      <div className="keys">
+    <div className="cal-grid grid gap-4 p-4">
+     
+        <Display input={input} result={result} />
+      
+      <div className="keys grid gap-4">
         {renderControlButtons()}
         {renderNumberButtons()}
       </div>
