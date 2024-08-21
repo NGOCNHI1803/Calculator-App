@@ -84,22 +84,57 @@ input, .number{
 
 }
 
-.keys button {
-  font-size: 1rem; /* Adjust font size as needed */
-  padding: 10px; /* Increase padding */
-}
 
 button:hover {
   background-color: darkgrey;
 }
 
 .keys, .grid{
-  color: rgb(11, 10, 10);
   
+  color: rgb(11, 10, 10);
+  flex-wrap: wrap; 
+  gap: 10px;
   
   
 padding: 15px;
   
 }
+.row, .flex{
+padding: 3px;
+
+}
+.row, .flex, .btn-clear{
+  padding: 3px;
+}
 
 
+
+.history-container{
+  background-color: rgb(194, 133, 255);
+  width: 300px;
+  justify-content: center;
+  margin: auto;
+  border-radius: 15px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(8, 8, 8, 0.2);
+} 
+h2{
+  color: rgb(6, 6, 6);
+  padding: 5px;
+  text-align: center;
+  
+}
+
+.history-entry{
+  font-size: 1.5rem;
+  font-style: bold;
+  padding: 10px;
+  margin-left: 18px;
+  color: #ede7e7;
+
+}
+
+.no-history{
+  padding: 10px;
+  margin-left: 18px;
+}
