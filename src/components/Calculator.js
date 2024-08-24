@@ -1,47 +1,59 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+// Calculator.js
+import React, { useMemo, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { evaluate } from 'mathjs';
 import Display from './Display';
 import ControlButton from './Buttons';
-import useButtonHandler from '../hooks/useButtonHandle';
 import '../styles/cal.css';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClockRotateLeft} from '@fortawesome/free-solid-svg-icons';
+import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { setInput, setResult, clearInput, deleteLastInput, addToHistory } from '../redux/actions';
 
 function Calculator() {
-  const [input, setInput] = useState('');
-  const [result, setResult] = useState('');
-  const [history, setHistory] = useState([]);
+  const input = useSelector((state) => state.input);
+  const result = useSelector((state) => state.result);
+  const history = useSelector((state) => state.history);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const numberButtons = useMemo(() => ['7', '8', '9', '4', '5', '6', '1', '2', '3', '0'], []);
   const operatorButtons = useMemo(() => ['%', '/', '*', '-', '+', '.'], []);
 
-  const handleButtonHistory = useCallback((input, result) => {
-    console.log('Adding to history:', { input, result }); 
-    if (input && result !== '' && result !== null) {
-      setHistory((prevHistory) => [...prevHistory, { input, result }]);
+  const handleButtonClick = useCallback((type) => {
+    if (numberButtons.includes(type) || operatorButtons.includes(type)) {
+      dispatch(setInput(input + type));
+    } else if (type === '=') {
+      try {
+        const result = evaluate(input);
+        dispatch(setResult(result));
+        dispatch(addToHistory(input, result));
+      } catch (error) {
+        dispatch(setResult('Error'));
+      }
+    } else if (type === 'C') {
+      dispatch(clearInput());
+    } else if (type === 'CE') {
+      dispatch(deleteLastInput());
+    } else if (type === 'history') {
+      navigate('/history', { state: { history } });
     }
-  }, []);
-
-  const handleButtonClick = useButtonHandler(input, setInput, setResult, handleButtonHistory);
+  }, [input, numberButtons, operatorButtons, dispatch, navigate, history]);
 
   const handleKeyboardInput = useCallback((event) => {
-    console.log('Key pressed:', event.key, event.code, event.keyCode); // Xem mã phím trong console
     const key = event.key;
     const keyCode = event.keyCode;
-    
+
     if (numberButtons.includes(key) || operatorButtons.includes(key)) {
-      setInput(prevInput => prevInput + key);
-    } else if (key === 'Enter' || keyCode === 187) { 
+      dispatch(setInput(input + key));
+    } else if (key === 'Enter' || keyCode === 187) {
       handleButtonClick('=');
     } else if (key === 'Backspace') {
-      setInput(prevInput => prevInput.slice(0, -1));
+      dispatch(deleteLastInput());
     } else if (key === 'Escape') {
-      setInput('');
+      dispatch(clearInput());
     }
-  }, [numberButtons, operatorButtons, handleButtonClick]);
-  
-  
+  }, [numberButtons, operatorButtons, input, handleButtonClick, dispatch]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardInput);
@@ -49,22 +61,20 @@ function Calculator() {
       window.removeEventListener('keydown', handleKeyboardInput);
     };
   }, [handleKeyboardInput]);
-  
-
 
   const renderControlButtons = () => (
     <div className="row flex flex-wrap gap-2 mb-4">
       {renderButton('CE', 'CE', 'btn-delete')}
       {renderButton('C', 'C', 'btn-clear')}
-      {operatorButtons.slice(0, 2).map(op => renderButton(op, op, 'btn-operator'))}
+      {operatorButtons.slice(0, 2).map((op) => renderButton(op, op, 'btn-operator'))}
     </div>
   );
 
   const renderNumberButtons = () => (
     <>
-      {[0, 3, 6].map(start => (
+      {[0, 3, 6].map((start) => (
         <div key={start} className="row flex flex-wrap gap-2 mb-2">
-          {numberButtons.slice(start, start + 3).map(num => renderButton(num, num, 'btn-number'))}
+          {numberButtons.slice(start, start + 3).map((num) => renderButton(num, num, 'btn-number'))}
           {renderButton(operatorButtons[start / 3 + 2], operatorButtons[start / 3 + 2], 'btn-operator')}
         </div>
       ))}
@@ -109,7 +119,6 @@ function Calculator() {
       <div className="keys grid gap-4">
         {renderControlButtons()}
         {renderNumberButtons()}
-        
       </div>
     </div>
   );
