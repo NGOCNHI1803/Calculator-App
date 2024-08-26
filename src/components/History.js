@@ -20,7 +20,7 @@ const History = () => {
             </div>
           ))
         ) : (
-          <div className="no-history">No history available.</div>
+          <div className="no-history">There's no history yet.</div>
         )}
       </div>
       <button
